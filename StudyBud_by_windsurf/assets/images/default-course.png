@@ -1,0 +1,32 @@
+<?php
+// Create a default course image
+header('Content-Type: image/png');
+
+// Create image
+$im = imagecreatetruecolor(800, 400);
+
+// Set colors
+$bg = imagecolorallocate($im, 239, 243, 245);
+$text_color = imagecolorallocate($im, 121, 121, 121);
+
+// Fill background
+imagefilledrectangle($im, 0, 0, 800, 400, $bg);
+
+// Add text
+$text = "Default Course Image";
+$font = 5;
+$bbox = imagettfbbox(20, 0, 'assets/fonts/arial.ttf', $text);
+$text_width = $bbox[2] - $bbox[0];
+$text_height = $bbox[1] - $bbox[7];
+$x = (800 - $text_width) / 2;
+$y = (400 - $text_height) / 2;
+
+// Draw text
+imagettftext($im, 20, 0, $x, $y, $text_color, 'assets/fonts/arial.ttf', $text);
+
+// Output image
+imagepng($im);
+
+// Clean up
+imagedestroy($im);
+?>

@@ -1,0 +1,309 @@
+# StudyBud Project Documentation
+
+## 1. Project Overview
+
+### 1.1 Introduction
+StudyBud is a modern learning platform built with PHP, HTML, CSS, and JavaScript. It provides a comprehensive learning experience with courses, video content, digital books, and progress tracking features.
+
+### 1.2 Key Features
+- User Authentication (Login/Register)
+- Course Management System
+- Video Content Management
+- Digital Book Library
+- Progress Tracking
+- Bookmarking System
+- Note-taking Feature
+- Responsive Design
+
+## 2. Technical Requirements
+
+### 2.1 System Requirements
+- PHP 7.4 or higher
+- MySQL 5.7 or higher
+- Web server (Apache/Nginx)
+- Modern web browser
+
+### 2.2 Development Tools
+- XAMPP (Apache, MySQL, PHP)
+- Code Editor (VS Code, Sublime Text, etc.)
+- Git for version control
+
+## 3. Database Design
+
+### 3.1 Users Table
+| Column            | Type         | Description                                           |
+|-------------------|--------------|-------------------------------------------------------|
+| id                | INT          | Auto-incrementing primary key                         |
+| name              | VARCHAR(100) | User's full name (required)                           |
+| email             | VARCHAR(100) | User's email (required, unique)                       |
+| password_hash     | VARCHAR(255) | Hashed password (required)                            |
+| profile_picture   | VARCHAR(255) | Path to profile image                                 |
+| bio               | TEXT         | User's biography                                      |
+| role              | ENUM         | User role (student, teacher, admin)                    |
+| created_at        | TIMESTAMP    | Account creation timestamp                            |
+| updated_at        | TIMESTAMP    | Last update timestamp                                 |
+
+### 3.2 Courses Table
+| Column            | Type         | Description                                           |
+|-------------------|--------------|-------------------------------------------------------|
+| id                | INT          | Auto-incrementing primary key                         |
+| title             | VARCHAR(255) | Course title (required)                               |
+| description       | TEXT         | Course description                                    |
+| category          | VARCHAR(50)  | Course category                                       |
+| thumbnail         | VARCHAR(255) | Course thumbnail image                                |
+| price             | DECIMAL      | Course price                                          |
+| instructor_id     | INT          | Foreign key to users table                            |
+| level             | ENUM         | Course difficulty level (beginner, intermediate, advanced) |
+| duration          | INT          | Course duration in minutes                            |
+| created_at        | TIMESTAMP    | Course creation timestamp                             |
+| updated_at        | TIMESTAMP    | Last update timestamp                                 |
+
+### 3.3 Course Videos Table
+| Column            | Type         | Description                                           |
+|-------------------|--------------|-------------------------------------------------------|
+| id                | INT          | Auto-incrementing primary key                         |
+| course_id         | INT          | Foreign key to courses table                          |
+| title             | VARCHAR(255) | Video title (required)                                |
+| description       | TEXT         | Video description                                     |
+| video_url         | VARCHAR(255) | Video file URL                                        |
+| duration          | INT          | Video duration in seconds                             |
+| order_number      | INT          | Video order in course                                 |
+| created_at        | TIMESTAMP    | Video creation timestamp                              |
+
+### 3.4 Books Table
+| Column            | Type         | Description                                           |
+|-------------------|--------------|-------------------------------------------------------|
+| id                | INT          | Auto-incrementing primary key                         |
+| title             | VARCHAR(255) | Book title (required)                                 |
+| author            | VARCHAR(255) | Book author                                           |
+| description       | TEXT         | Book description                                      |
+| cover_image       | VARCHAR(255) | Book cover image                                      |
+| file_path         | VARCHAR(255) | Path to book file                                     |
+| category          | VARCHAR(50)  | Book category                                         |
+| publisher         | VARCHAR(100) | Book publisher                                        |
+| publication_year  | YEAR         | Year of publication                                   |
+| created_at        | TIMESTAMP    | Book creation timestamp                               |
+| updated_at        | TIMESTAMP    | Last update timestamp                                 |
+
+### 3.5 Progress Tracking Tables
+#### User Course Progress
+| Column            | Type         | Description                                           |
+|-------------------|--------------|-------------------------------------------------------|
+| id                | INT          | Auto-incrementing primary key                         |
+| user_id           | INT          | Foreign key to users table                            |
+| course_id         | INT          | Foreign key to courses table                          |
+| current_video_id  | INT          | Current video being watched                           |
+| progress_percentage| DECIMAL     | Course completion percentage                          |
+| status            | ENUM         | Course status (in_progress, completed, not_started)   |
+| started_at        | TIMESTAMP    | Course start timestamp                                |
+| completed_at      | TIMESTAMP    | Course completion timestamp                           |
+
+#### User Video Progress
+| Column            | Type         | Description                                           |
+|-------------------|--------------|-------------------------------------------------------|
+| id                | INT          | Auto-incrementing primary key                         |
+| user_id           | INT          | Foreign key to users table                            |
+| video_id          | INT          | Foreign key to course_videos table                    |
+| current_time      | INT          | Current playback position in seconds                  |
+| total_duration    | INT          | Video total duration                                  |
+| is_completed      | BOOLEAN      | Video completion status                               |
+| last_watched_at   | TIMESTAMP    | Last watched timestamp                                |
+
+#### User Book Progress
+| Column            | Type         | Description                                           |
+|-------------------|--------------|-------------------------------------------------------|
+| id                | INT          | Auto-incrementing primary key                         |
+| user_id           | INT          | Foreign key to users table                            |
+| book_id           | INT          | Foreign key to books table                            |
+| page_number       | INT          | Current page number                                   |
+| progress_percentage| DECIMAL     | Book reading progress                                 |
+| status            | ENUM         | Reading status (reading, completed, not_started)      |
+| started_at        | TIMESTAMP    | Book start timestamp                                  |
+| completed_at      | TIMESTAMP    | Book completion timestamp                             |
+
+### 3.6 Interaction Tables
+#### Bookmarks
+| Column            | Type         | Description                                           |
+|-------------------|--------------|-------------------------------------------------------|
+| id                | INT          | Auto-incrementing primary key                         |
+| user_id           | INT          | Foreign key to users table                            |
+| content_type      | ENUM         | Type of content (course, video, book)                 |
+| content_id        | INT          | ID of the bookmarked content                          |
+| created_at        | TIMESTAMP    | Bookmark creation timestamp                           |
+
+#### User Notes
+| Column            | Type         | Description                                           |
+|-------------------|--------------|-------------------------------------------------------|
+| id                | INT          | Auto-incrementing primary key                         |
+| user_id           | INT          | Foreign key to users table                            |
+| content_type      | ENUM         | Type of content (course, video, book)                 |
+| content_id        | INT          | ID of the content being noted                         |
+| title             | VARCHAR(255) | Note title                                           |
+| content           | TEXT         | Note content                                          |
+| created_at        | TIMESTAMP    | Note creation timestamp                               |
+| updated_at        | TIMESTAMP    | Last update timestamp                                 |
+
+## 4. Project Structure
+
+```
+StudyBud_by_windsurf/
+├── includes/           # PHP components and utilities
+│   ├── session.php     # Session management and user functions
+│   ├── db.php         # Database connection and initialization
+│   ├── config.php     # Application configuration
+│   └── footer.php     # Footer template
+├── pages/              # Main application pages
+│   ├── courses.php    # Courses listing page
+│   ├── course.php     # Individual course page
+│   ├── library.php    # Library page
+│   ├── profile.php    # User profile page
+│   ├── settings.php   # User settings page
+│   └── logout.php     # Logout handler
+├── assets/            # Static assets
+│   ├── css/          # Stylesheets
+│   │   └── index.css # Main stylesheet
+│   ├── js/           # JavaScript files
+│   │   ├── modern-script.js # Modern JavaScript features
+│   │   └── index.js  # Main JavaScript
+│   └── images/       # Static images
+│       └── logo.png  # Application logo
+├── database/          # Database files
+│   └── schema.sql    # Database schema
+├── config.php        # Database configuration
+├── index.php        # Main application entry point
+├── login.php        # Login page
+├── register.php     # Registration page
+└── SECURITY_AUDIT.md # Security documentation
+```
+
+## 5. Key Relationships
+
+### 5.1 Users and Courses
+- Users can have multiple roles (student, teacher, admin)
+- Teachers create and manage courses
+- Students enroll in and complete courses
+- Progress tracking for each user-course relationship
+
+### 5.2 Courses and Content
+- Courses contain multiple ordered videos
+- Videos have duration and playback tracking
+- Books are standalone learning materials
+- Both videos and books can be bookmarked and noted
+
+### 5.3 Progress Tracking
+- Independent tracking for courses, videos, and books
+- Percentage-based progress calculation
+- Status tracking (in_progress, completed, not_started)
+- Timestamps for progress tracking
+
+## 6. Security Features
+
+### 6.1 Authentication & Authorization
+- Session-based authentication
+- CSRF protection
+- Secure password hashing
+- Role-based access control
+- Secure file uploads
+
+### 6.2 Data Protection
+- Input validation
+- SQL injection prevention
+- XSS protection
+- File type and size validation
+- Secure session management
+
+### 6.3 Error Handling
+- Graceful error handling
+- User-friendly error messages
+- Logging of critical errors
+- Exception handling
+
+## 7. Best Practices
+
+### 7.1 Code Organization
+- Clear separation of concerns
+- Modular file structure
+- Consistent naming conventions
+- Proper documentation
+- Version control
+
+### 7.2 Performance
+- Optimized database queries
+- Efficient asset loading
+- Caching strategies
+- Minimized database connections
+- Proper indexing
+
+### 7.3 Maintainability
+- Well-documented code
+- Consistent code style
+- Easy-to-follow structure
+- Regular code reviews
+- Automated testing
+
+## 8. Installation Guide
+
+### 8.1 Prerequisites
+1. Install XAMPP
+2. Ensure PHP 7.4+ is installed
+3. Install MySQL 5.7+
+4. Configure web server
+
+### 8.2 Setup
+1. Clone the repository
+2. Create database `studybud_windsurf`
+3. Import schema from `database/schema.sql`
+4. Configure database connection in `config.php`
+5. Configure web server
+
+### 8.3 Running the Application
+1. Start XAMPP services
+2. Access application at `http://localhost/Styudy%20bud/StudyBud_by_windsurf/`
+3. Register a new account
+4. Start using the platform
+
+## 9. Contributing
+
+### 9.1 Guidelines
+1. Fork the repository
+2. Create a feature branch
+3. Commit changes
+4. Push to branch
+5. Open a Pull Request
+
+### 9.2 Code Style
+- Follow PSR-12 coding standards
+- Use meaningful variable names
+- Add proper documentation
+- Write clean, maintainable code
+- Follow security best practices
+
+## 10. License
+
+This project is licensed under the MIT License. See LICENSE file for details.
+
+## 11. Support
+
+For support, please:
+1. Check the documentation
+2. Search existing issues
+3. Open a new issue if needed
+4. Contact the development team
+
+## 12. Version History
+
+### 12.1 Current Version
+- Complete database schema
+- User authentication system
+- Course management
+- Video content management
+- Progress tracking
+- Bookmarking system
+- Note-taking feature
+
+### 12.2 Future Updates
+- Additional features planned
+- Performance improvements
+- Security enhancements
+- User interface improvements
+- New content types

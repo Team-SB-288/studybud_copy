@@ -1,0 +1,11 @@
+<?php
+// Create a simple logo image
+header('Content-Type: image/png');
+$im = imagecreatetruecolor(200, 50);
+$bg = imagecolorallocate($im, 44, 62, 80);
+$text_color = imagecolorallocate($im, 52, 152, 219);
+imagefilledrectangle($im, 0, 0, 200, 50, $bg);
+imagestring($im, 5, 50, 15, 'StudyBud', $text_color);
+imagepng($im);
+imagedestroy($im);
+?>

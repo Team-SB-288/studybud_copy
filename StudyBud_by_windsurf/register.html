@@ -1,0 +1,228 @@
+<?php
+/**
+ * StudyBud Registration Page
+ * 
+ * This page handles user registration with proper validation,
+ * CSRF protection, and secure password handling.
+ * 
+ * @version 1.0
+ * @author StudyBud Team
+ */
+
+// Include configuration and utilities
+require_once __DIR__ . '/../../config/config.php';
+require_once UTILS_PATH . '/csrf_token.php';
+require_once UTILS_PATH . '/session.php';
+
+// Session is already started in config.php
+
+// Redirect if already logged in
+if (isset($_SESSION['user_id'])) {
+    header('Location: ' . get_url('pages/main/dashboard.php'));
+    exit;
+}
+
+// Get any error or success messages from session
+$register_error = $_SESSION['register_error'] ?? '';
+$register_success = $_SESSION['register_success'] ?? '';
+
+// Clear session messages after retrieving them
+unset($_SESSION['register_error']);
+unset($_SESSION['register_success']);
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - StudyBud</title>
+    <link rel="stylesheet" href="<?php echo CSS_URL; ?>/modern-style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px 0;
+        }
+        
+        .register-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .register-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .register-header h1 {
+            color: #764ba2;
+            margin-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            border-color: #764ba2;
+            outline: none;
+        }
+        
+        .btn-register {
+            background-color: #764ba2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-register:hover {
+            background-color: #663d8e;
+        }
+        
+        .register-footer {
+            text-align: center;
+            margin-top: 25px;
+        }
+        
+        .register-footer a {
+            color: #764ba2;
+            text-decoration: none;
+        }
+        
+        .register-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .password-requirements {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-header">
+            <h1>StudyBud</h1>
+            <p>Create your account</p>
+        </div>
+        
+        <?php if (!empty($register_error)): ?>
+            <div class="alert alert-danger">
+                <?php echo htmlspecialchars($register_error); ?>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (!empty($register_success)): ?>
+            <div class="alert alert-success">
+                <?php echo htmlspecialchars($register_success); ?>
+            </div>
+        <?php endif; ?>
+        
+        <form action="<?php echo get_url('includes/handlers/register_handler.php'); ?>" method="post" enctype="multipart/form-data">
+            <!-- CSRF Protection -->
+            <?php echo csrf_token_field(); ?>
+            
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+                <p class="password-requirements">Password must be at least 6 characters long</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="profile_picture">Profile Picture (Optional)</label>
+                <input type="file" id="profile_picture" name="profile_picture" accept="image/*">
+            </div>
+            
+            <button type="submit" class="btn-register">Create Account</button>
+            
+            <div class="register-footer">
+                <p>Already have an account? <a href="<?php echo get_url('pages/auth/login.php'); ?>">Sign In</a></p>
+                <p><a href="<?php echo get_url('pages/landing.php'); ?>">Back to Home</a></p>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        // Client-side password confirmation validation
+        document.getElementById('confirm_password').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            
+            if (password !== confirmPassword) {
+                this.setCustomValidity('Passwords do not match');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    </script>
+</body>
+</html>
